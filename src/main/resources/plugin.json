@@ -1,0 +1,13 @@
+{
+  "id": "particle_models",
+  "minversion": 202300400000,
+  "maxversion": 202300499999,
+  "weight": 3001,
+  "javaplugin": "net.nerdypuzzle.particlemodels.Launcher",
+  "info": {
+    "name": "Particle models",
+    "version": "1.0",
+    "description": "Adds a new element to allow for using java models as particles",
+    "author": "NerdyPuzzle"
+  }
+}
