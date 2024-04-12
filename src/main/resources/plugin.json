@@ -1,9 +1,10 @@
 {
   "id": "particle_models",
-  "minversion": 202300400000,
-  "maxversion": 202300499999,
   "weight": 3001,
   "javaplugin": "net.nerdypuzzle.particlemodels.Launcher",
+  "supportedversions": [
+    202400115713
+  ],
   "info": {
     "name": "Particle models",
     "version": "1.1",
