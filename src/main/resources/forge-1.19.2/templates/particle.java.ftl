@@ -69,7 +69,7 @@ package ${package}.client.particle;
 
 					@SubscribeEvent
 					public void render(RenderLevelStageEvent event) {
-						if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+						if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
 						<#assign rendertype = "">
 						<#if model.rendertype == "Cutout">
 						    <#assign rendertype = "entityCutoutNoCull(new ResourceLocation(\"${modid}:textures/particle/${data.getModElement().getRegistryName()}.png\"))">
@@ -82,16 +82,16 @@ package ${package}.client.particle;
 						</#if>
 							VertexConsumer consumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.${rendertype});
 							Vec3 camPos = event.getCamera().getPosition();
-							double x = particle.x - camPos.x();
-							double y = particle.y - camPos.y();
-							double z = particle.z - camPos.z();
+							double x = Mth.lerp(event.getPartialTick(), particle.xo, particle.x) - camPos.x();
+							double y = Mth.lerp(event.getPartialTick(), particle.yo, particle.y) - camPos.y();
+							double z = Mth.lerp(event.getPartialTick(), particle.zo, particle.z) - camPos.z();
 							event.getPoseStack().pushPose();
 							event.getPoseStack().translate(x, y, z);
-							event.getPoseStack().mulPose(Axis.XP.rotationDegrees(180));
+							event.getPoseStack().mulPose(Vector3f.XP.rotationDegrees(180));
 							event.getPoseStack().scale(scale, scale, scale);
-							event.getPoseStack().mulPose(Axis.XP.rotationDegrees(rotX));
-							event.getPoseStack().mulPose(Axis.YP.rotationDegrees(rotY));
-							event.getPoseStack().mulPose(Axis.ZP.rotationDegrees(rotZ));
+							event.getPoseStack().mulPose(Vector3f.XP.rotationDegrees(rotX));
+							event.getPoseStack().mulPose(Vector3f.YP.rotationDegrees(rotY));
+							event.getPoseStack().mulPose(Vector3f.ZP.rotationDegrees(rotZ));
 							model.renderToBuffer(event.getPoseStack(), consumer, particle.getLightColor(event.getPartialTick()), OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
 							event.getPoseStack().popPose();
 						}

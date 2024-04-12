@@ -85,9 +85,9 @@ import com.mojang.math.Axis;
 						</#if>
 							VertexConsumer consumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.${rendertype});
 							Vec3 camPos = event.getCamera().getPosition();
-							double x = particle.x - camPos.x();
-							double y = particle.y - camPos.y();
-							double z = particle.z - camPos.z();
+							double x = Mth.lerp(event.getPartialTick(), particle.xo, particle.x) - camPos.x();
+							double y = Mth.lerp(event.getPartialTick(), particle.yo, particle.y) - camPos.y();
+							double z = Mth.lerp(event.getPartialTick(), particle.zo, particle.z) - camPos.z();
 							event.getPoseStack().pushPose();
 							event.getPoseStack().translate(x, y, z);
 							event.getPoseStack().mulPose(Axis.XP.rotationDegrees(180));
