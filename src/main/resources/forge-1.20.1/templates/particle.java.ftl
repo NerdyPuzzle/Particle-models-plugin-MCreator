@@ -1,7 +1,7 @@
 <#--
  # MCreator (https://mcreator.net/)
  # Copyright (C) 2012-2020, Pylo
- # Copyright (C) 2020-2023, Pylo, opensource contributors
+ # Copyright (C) 2020-2024, Pylo, opensource contributors
  #
  # This program is free software: you can redistribute it and/or modify
  # it under the terms of the GNU General Public License as published by
@@ -57,54 +57,43 @@ import com.mojang.math.Axis;
 			<#if model != "">
 			class ${name}RenderSequence {
 				private ClientLevel world;
+				public EntityModel model = new ${model.model}(Minecraft.getInstance().getEntityModels().bakeLayer(${model.model}.LAYER_LOCATION));
+				private float scale = (float) <#if hasProcedure(model.modelScale)><@procedureOBJToNumberCode model.modelScale/><#else>${model.modelScale.getFixedValue()}</#if>;
+				private int rotX = (int) <#if hasProcedure(model.modelRotationX)><@procedureOBJToNumberCode model.modelRotationX/><#else>${model.modelRotationX.getFixedValue()}</#if>;
+				private int rotY = (int) <#if hasProcedure(model.modelRotationX)><@procedureOBJToNumberCode model.modelRotationY/><#else>${model.modelRotationX.getFixedValue()}</#if>;
+				private int rotZ = (int) <#if hasProcedure(model.modelRotationX)><@procedureOBJToNumberCode model.modelRotationZ/><#else>${model.modelRotationX.getFixedValue()}</#if>;
 
-				private class ${name}Renderer {
-					public EntityModel model = new ${model.model}(Minecraft.getInstance().getEntityModels().bakeLayer(${model.model}.LAYER_LOCATION));
-
-					public ${name}Renderer() {
-						MinecraftForge.EVENT_BUS.register(this);
-					}
-
-                    private float scale = (float) <#if hasProcedure(model.modelScale)><@procedureOBJToNumberCode model.modelScale/><#else>${model.modelScale.getFixedValue()}</#if>;
-                    private int rotX = (int) <#if hasProcedure(model.modelRotationX)><@procedureOBJToNumberCode model.modelRotationX/><#else>${model.modelRotationX.getFixedValue()}</#if>;
-                    private int rotY = (int) <#if hasProcedure(model.modelRotationX)><@procedureOBJToNumberCode model.modelRotationY/><#else>${model.modelRotationX.getFixedValue()}</#if>;
-                    private int rotZ = (int) <#if hasProcedure(model.modelRotationX)><@procedureOBJToNumberCode model.modelRotationZ/><#else>${model.modelRotationX.getFixedValue()}</#if>;
-
-					@SubscribeEvent
-					public void render(RenderLevelStageEvent event) {
-						if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
-						<#assign rendertype = "">
-						<#if model.rendertype == "Cutout">
-						    <#assign rendertype = "entityCutoutNoCull(new ResourceLocation(\"${modid}:textures/particle/${data.getModElement().getRegistryName()}.png\"))">
-						<#elseif model.rendertype == "Translucent">
-						    <#assign rendertype = "entityTranslucent(new ResourceLocation(\"${modid}:textures/particle/${data.getModElement().getRegistryName()}.png\"))">
-						<#elseif model.rendertype == "Glowing">
-						    <#assign rendertype = "entityTranslucentEmissive(new ResourceLocation(\"${modid}:textures/particle/${data.getModElement().getRegistryName()}.png\"))">
-						<#elseif model.rendertype == "End portal">
-						    <#assign rendertype = "endPortal()">
-						</#if>
-							VertexConsumer consumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.${rendertype});
-							Vec3 camPos = event.getCamera().getPosition();
-							double x = Mth.lerp(event.getPartialTick(), particle.xo, particle.x) - camPos.x();
-							double y = Mth.lerp(event.getPartialTick(), particle.yo, particle.y) - camPos.y();
-							double z = Mth.lerp(event.getPartialTick(), particle.zo, particle.z) - camPos.z();
-							event.getPoseStack().pushPose();
-							event.getPoseStack().translate(x, y, z);
-							event.getPoseStack().mulPose(Axis.XP.rotationDegrees(180));
-							event.getPoseStack().scale(scale, scale, scale);
-							event.getPoseStack().mulPose(Axis.XP.rotationDegrees(rotX));
-							event.getPoseStack().mulPose(Axis.YP.rotationDegrees(rotY));
-							event.getPoseStack().mulPose(Axis.ZP.rotationDegrees(rotZ));
-							model.renderToBuffer(event.getPoseStack(), consumer, particle.getLightColor(event.getPartialTick()), OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-							event.getPoseStack().popPose();
-						}
+				@SubscribeEvent
+				public void render(RenderLevelStageEvent event) {
+					if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+					<#assign rendertype = "">
+					<#if model.rendertype == "Cutout">
+						<#assign rendertype = "entityCutoutNoCull(new ResourceLocation(\"${modid}:textures/particle/${data.getModElement().getRegistryName()}.png\"))">
+					<#elseif model.rendertype == "Translucent">
+						<#assign rendertype = "entityTranslucent(new ResourceLocation(\"${modid}:textures/particle/${data.getModElement().getRegistryName()}.png\"))">
+					<#elseif model.rendertype == "Glowing">
+						<#assign rendertype = "entityTranslucentEmissive(new ResourceLocation(\"${modid}:textures/particle/${data.getModElement().getRegistryName()}.png\"))">
+					<#elseif model.rendertype == "End portal">
+						<#assign rendertype = "endPortal()">
+					</#if>
+						VertexConsumer consumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.${rendertype});
+						Vec3 camPos = event.getCamera().getPosition();
+						double x = Mth.lerp(event.getPartialTick(), particle.xo, particle.x) - camPos.x();
+						double y = Mth.lerp(event.getPartialTick(), particle.yo, particle.y) - camPos.y();
+						double z = Mth.lerp(event.getPartialTick(), particle.zo, particle.z) - camPos.z();
+						event.getPoseStack().pushPose();
+						event.getPoseStack().translate(x, y, z);
+						event.getPoseStack().mulPose(Axis.XP.rotationDegrees(180));
+						event.getPoseStack().scale(scale, scale, scale);
+						event.getPoseStack().mulPose(Axis.XP.rotationDegrees(rotX));
+						event.getPoseStack().mulPose(Axis.YP.rotationDegrees(rotY));
+						event.getPoseStack().mulPose(Axis.ZP.rotationDegrees(rotZ));
+						model.renderToBuffer(event.getPoseStack(), consumer, particle.getLightColor(event.getPartialTick()), OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+						event.getPoseStack().popPose();
 					}
 				}
 
-				private ${name}Renderer renderer;
-
 				public void start(ClientLevel world) {
-					this.renderer = new ${name}Renderer();
 					MinecraftForge.EVENT_BUS.register(this);
 					this.world = world;
 				}
@@ -116,12 +105,11 @@ import com.mojang.math.Axis;
 				}
 
 				private void end() {
-					MinecraftForge.EVENT_BUS.unregister(renderer);
 					MinecraftForge.EVENT_BUS.unregister(this);
 				}
 			}
-		    ${name}RenderSequence sequence = new ${name}RenderSequence();
-		    sequence.start(worldIn);
+			${name}RenderSequence sequence = new ${name}RenderSequence();
+			sequence.start(worldIn);
 			</#if>
 			return particle;
 		}
@@ -139,7 +127,10 @@ import com.mojang.math.Axis;
 		this.spriteSet = spriteSet;
 
 		this.setSize(${data.width}f, ${data.height}f);
-		<#if data.scale != 1>this.quadSize *= ${data.scale}f;</#if>
+
+		<#if data.scale.getFixedValue() != 1 && !hasProcedure(data.scale)>
+		this.quadSize *= ${data.scale.getFixedValue()}f;
+		</#if>
 
 		<#if (data.maxAgeDiff > 0)>
 		this.lifetime = (int) Math.max(1, ${data.maxAge} + (this.random.nextInt(${data.maxAgeDiff * 2}) - ${data.maxAgeDiff}));
@@ -173,12 +164,19 @@ import com.mojang.math.Axis;
 	</#if>
 
 	@Override public ParticleRenderType getRenderType() {
-	    <#if model == "">
+		<#if model == "">
 		return ParticleRenderType.PARTICLE_SHEET_${data.renderType};
 		<#else>
-        return ParticleRenderType.NO_RENDER;
+		return ParticleRenderType.NO_RENDER;
 		</#if>
 	}
+
+	<#if hasProcedure(data.scale)>
+	@Override public float getQuadSize(float scale) {
+		Level world = this.level;
+		return super.getQuadSize(scale) * (float) <@procedureOBJToConditionCode data.scale/>;
+	}
+	</#if>
 
 	@Override public void tick() {
 		super.tick();
