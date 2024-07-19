@@ -99,9 +99,19 @@ import com.mojang.math.Axis;
 				}
 
 				@SubscribeEvent
-				public void tick(TickEvent.ClientTickEvent event) {
+				public void tick(ClientTickEvent.Post event) {
 					if (!particle.isAlive())
 						end();
+				}
+
+				@SubscribeEvent
+				public void dimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
+					end();
+				}
+
+				@SubscribeEvent
+				public void loggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+					end();
 				}
 
 				private void end() {
