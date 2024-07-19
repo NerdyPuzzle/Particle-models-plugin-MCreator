@@ -112,6 +112,16 @@ package ${package}.client.particle;
 						end();
 				}
 
+				@SubscribeEvent
+				public void dimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
+					end();
+				}
+
+				@SubscribeEvent
+				public void loggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+					end();
+				}
+
 				private void end() {
 					MinecraftForge.EVENT_BUS.unregister(renderer);
 					MinecraftForge.EVENT_BUS.unregister(this);
